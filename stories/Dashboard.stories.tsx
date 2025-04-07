@@ -4,7 +4,7 @@ import { AppLayout } from "@app/AppLayout/AppLayout";
 import { Dashboard } from "@app/Dashboard/Dashboard";
 
 const meta = {
-  title: "v2.1/Home",
+  title: "Dashboard/Dashboard",
   component: () => {
     return <>An example custom homepage for v2.1</>;
   },
