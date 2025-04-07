@@ -1,9 +1,8 @@
-import * as React from 'react';
 import { PageSection, Title } from '@patternfly/react-core';
 
-const Dashboard: React.FunctionComponent = () => (
+const Dashboard = () => (
   <PageSection hasBodyWrapper={false}>
-    <Title headingLevel="h1" size="lg">Dashboard Page Title!</Title>
+    <Title headingLevel="h1" size="lg">Trustify v2.1</Title>
   </PageSection>
 )
 
