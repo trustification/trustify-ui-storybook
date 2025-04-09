@@ -6,10 +6,16 @@
 ## Quickstart
 
 ```
-git clone https://github.com/patternfly/patternfly-react-seed
-cd patternfly-react-seed
-npm install && npm run start:dev
+git clone https://github.com/trustification/trustify-ui-storybook
+cd trustify-ui-storybook
+npm install && npm run start
 ```
+
+## Configurations
+* [TypeScript Config](./tsconfig.json)
+* [Webpack Config](./webpack.config.ts)
+* [Editor Config](./.editorconfig)
+* [Storybook Config](./.storybook/main.ts)
 
 ## Development
 
@@ -18,7 +24,7 @@ npm install && npm run start:dev
 npm install
 
 # Start the development server
-npm run start:dev
+npm run start
 
 # Run a production build (outputs to "dist" dir)
 npm run build

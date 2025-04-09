@@ -24,7 +24,7 @@ interface IAppLayout {
 }
 
 const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const masthead = (
     <Masthead>
       <MastheadMain>
@@ -39,7 +39,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
         <MastheadBrand data-codemods>
           <MastheadLogo data-codemods>
             <svg height="40px" viewBox="0 0 679 158">
-              <title>PatternFly logo</title>
+              <title>TPA v2.1+ Storybook</title>
               <defs>
                 <linearGradient x1="68%" y1="2.25860997e-13%" x2="32%" y2="100%" id="linearGradient-basic-masthead">
                   <stop stopColor="#2B9AF3" offset="0%"></stop>

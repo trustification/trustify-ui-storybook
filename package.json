@@ -47,8 +47,7 @@
     "eslint": "eslint --ext .tsx,.js,.ts ./src/",
     "format": "prettier --check --write ./src/**/*.{tsx,ts}",
     "lint": "npm run eslint",
-    "start": "sirv dist --cors --single --host --port 8080",
-    "start:dev": "webpack serve --color --progress --config webpack.config.ts",
+    "start": "webpack serve --color --progress --config webpack.config.ts",
     "storybook": "storybook dev -p 6006",
     "test": "echo \"Error: no test specified\" && exit 1",
     "type-check": "tsc --noEmit"
