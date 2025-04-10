@@ -5,6 +5,13 @@ import { Support } from '@app/Support/Support';
 import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
 import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
 import { NotFound } from '@app/NotFound/NotFound';
+import { SBOMsPage } from '@app/SBOMs/SBOMsPage';
+import { AdvisoriesPage } from '@app/Advisories/AdvisoriesPage';
+import { ImportersPage } from '@app/Importers/ImportersPage';
+import { PackagesPage } from '@app/Packages/PackagesPage';
+import { SearchPage } from '@app/Search/SearchPage';
+import { UploadPage } from '@app/Upload/UploadPage';
+import { VulnerabilitiesPage } from '@app/Vulnerabilities/VulnerabilitiesPage';
 
 export interface IAppRoute {
   label?: string; // Excluding the label will exclude the route from the nav sidebar in AppLayout
@@ -57,6 +64,55 @@ const routes: AppRouteConfig[] = [
         title: 'Profile Settings',
       },
     ],
+  },
+  {
+    element: <AdvisoriesPage />,
+    exact: true,
+    label: 'Advisories',
+    path: '/advisories',
+    title: 'Advisories',
+  },
+  {
+    element: <ImportersPage />,
+    exact: true,
+    label: 'Importers',
+    path: '/importers',
+    title: 'Importers',
+  },
+  {
+    element: <PackagesPage />,
+    exact: true,
+    label: 'Packages',
+    path: '/packages',
+    title: 'Packages',
+  },
+  {
+    element: <SBOMsPage />,
+    exact: true,
+    label: 'SBOMs',
+    path: '/sboms',
+    title: 'SBOMs',
+  },
+  {
+    element: <SearchPage />,
+    exact: true,
+    label: 'Search',
+    path: '/search',
+    title: 'Search',
+  },
+  {
+    element: <UploadPage />,
+    exact: true,
+    label: 'Upload',
+    path: '/upload',
+    title: 'Upload',
+  },
+  {
+    element: <VulnerabilitiesPage />,
+    exact: true,
+    label: 'Vulnerabilities',
+    path: '/vulnerabilities',
+    title: 'Vulnerabilities',
   },
 ];
 

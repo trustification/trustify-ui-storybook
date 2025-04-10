@@ -5,6 +5,7 @@
     "sourceType": "module"
   },
   "extends": [
+    "plugin:import/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
     "prettier"
