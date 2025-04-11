@@ -1,447 +1,417 @@
-import * as React from 'react';
 import {
-  CheckCircleIcon,
-  CodeBranchIcon,
-  CodeIcon,
-  CubeIcon,
-  CubesIcon,
-  EllipsisVIcon,
-  ExclamationTriangleIcon,
-  FilterIcon,
-  SearchIcon,
-  TimesCircleIcon,
-} from '@patternfly/react-icons';
-import {
-  Badge,
-  Button,
-  ButtonVariant,
   Content,
-  ContentVariants,
-  DataList,
-  DataListAction,
-  DataListCell,
-  DataListItem,
-  DataListItemCells,
-  DataListItemRow,
   Divider,
-  Dropdown,
-  DropdownItem,
-  DropdownList,
   Flex,
   FlexItem,
-  InputGroup,
-  InputGroupItem,
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuList,
   MenuToggle,
-  MenuToggleCheckbox,
   PageSection,
   Pagination,
-  Select,
-  SelectList,
-  SelectOption,
-  SelectOptionProps,
-  Stack,
-  StackItem,
-  TextInput,
+  PaginationVariant,
+  Popper,
+  SearchInput,
   Toolbar,
   ToolbarContent,
   ToolbarFilter,
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
+  Tooltip,
 } from '@patternfly/react-core';
-import { Fragment, useState } from 'react';
+import { FilterIcon } from '@patternfly/react-icons';
+import { Table, Thead, Tr, Th, Tbody, Td, ActionsColumn } from '@patternfly/react-table';
+import * as React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { rows, columns, SBOMsDataRow } from './SBOMs.data';
+import { right } from '@patternfly/react-core/dist/esm/helpers/Popper/thirdparty/popper-core';
+import ShieldIcon from '@patternfly/react-icons/dist/esm/icons/shield-alt-icon';
 
 export interface ISBOMsPageProps {
   sampleProp?: string;
 }
 
-interface SelectOptionType extends Omit<SelectOptionProps, 'children'> {
-  label: string;
-}
+type Direction = 'asc' | 'desc' | undefined;
 
-const statusOptions: SelectOptionType[] = [
-  { value: 'New', label: 'New' },
-  { value: 'Pending', label: 'Pending' },
-  { value: 'Running', label: 'Running' },
-  { value: 'Cancelled', label: 'Cancelled' },
-];
-
-const riskOptions: SelectOptionType[] = [
-  { value: 'Low', label: 'Low' },
-  { value: 'Medium', label: 'Medium' },
-  { value: 'High', label: 'High' },
-];
+const severityCount = (row: SBOMsDataRow) => {
+  const total = row.vulnerabilities?.reduce((acc, vuln) => acc + (vuln.score ?? 0), 0) ?? 0;
+  return Math.round(total * 10) / 10;
+};
 
 const SBOMsPage = ({}: ISBOMsPageProps) => {
-  const [filters, setFilters] = useState<Record<string, string[]>>({ products: [] });
-  const [inputValue, setInputValue] = useState('');
-  const [isLowerToolbarDropdownOpen, setIsLowerToolbarDropdownOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [riskIsOpen, setRiskIsOpen] = useState(false);
-  const [riskSelected, setRiskSelected] = useState<string | number | undefined>('Risk');
-  const [selectedDataListItemId, setSelectedDataListItemId] = useState('');
-  const [state, setState] = useState({});
-  const [statusIsOpen, setStatusIsOpen] = useState(false);
-  const [statusSelected, setStatusSelected] = useState<string | number | undefined>('Status');
-  const [totalItemCount, setTotalItemCount] = useState(10);
+  const [searchValue, setSearchValue] = useState('');
 
-  const buildFilterDropdown = () => {
-    const filterDropdownItems = (
-      <SelectList>
-        <SelectOption
-          hasCheckbox
-          key="patternfly"
-          value="PatternFly"
-          isSelected={filters.products.includes('PatternFly')}
-        >
-          PatternFly
-        </SelectOption>
-        <SelectOption hasCheckbox key="activemq" value="ActiveMQ" isSelected={filters.products.includes('ActiveMQ')}>
-          ActiveMQ
-        </SelectOption>
-        <SelectOption
-          hasCheckbox
-          key="apachespark"
-          value="Apache Spark"
-          isSelected={filters.products.includes('Apache Spark')}
-        >
-          Apache Spark
-        </SelectOption>
-        <SelectOption hasCheckbox key="avro" value="Avro" isSelected={filters.products.includes('Avro')}>
-          Avro
-        </SelectOption>
-        <SelectOption
-          hasCheckbox
-          key="azureservices"
-          value="Azure Services"
-          isSelected={filters.products.includes('Azure Services')}
-        >
-          Azure Services
-        </SelectOption>
-        <SelectOption hasCheckbox key="crypto" value="Crypto" isSelected={filters.products.includes('Crypto')}>
-          Crypto
-        </SelectOption>
-        <SelectOption hasCheckbox key="dropbox" value="DropBox" isSelected={filters.products.includes('DropBox')}>
-          DropBox
-        </SelectOption>
-        <SelectOption
-          hasCheckbox
-          key="jbossdatagrid"
-          value="JBoss Data Grid"
-          isSelected={filters.products.includes('JBoss Data Grid')}
-        >
-          JBoss Data Grid
-        </SelectOption>
-        <SelectOption hasCheckbox key="rest" value="REST" isSelected={filters.products.includes('REST')}>
-          REST
-        </SelectOption>
-        <SelectOption hasCheckbox key="swagger" value="SWAGGER" isSelected={filters.products.includes('SWAGGER')}>
-          SWAGGER
-        </SelectOption>
-      </SelectList>
-    );
-
-    return (
-      <ToolbarFilter categoryName="Products" labels={filters.products}>
-        <Select
-          aria-label="Products"
-          role="menu"
-          toggle={(toggleRef) => (
-            <MenuToggle ref={toggleRef} onClick={onToolbarDropdownToggle} isExpanded={isLowerToolbarDropdownOpen}>
-              Filter by creator name
-              {filters.products.length > 0 && <Badge isRead>{filters.products.length}</Badge>}
-            </MenuToggle>
-          )}
-          onSelect={(event, selection) => onNameSelect(event, selection?.toString())}
-          onOpenChange={(isOpen) => {
-            setIsLowerToolbarDropdownOpen(isOpen);
-          }}
-          selected={filters.products}
-          isOpen={isLowerToolbarDropdownOpen}
-        >
-          {filterDropdownItems}
-        </Select>
-      </ToolbarFilter>
-    );
+  const onSearchChange = (value: string) => {
+    setSearchValue(value);
   };
 
-  const onStatusSelect = (_event: React.MouseEvent<Element> | undefined, value: string | number | undefined) => {
-    setStatusSelected(value);
-    setStatusIsOpen(false);
+  const handleSetPage = (_evt: React.MouseEvent | React.KeyboardEvent | MouseEvent, newPage: number) => {
+    setPage(newPage);
   };
 
-  const onRiskSelect = (_event: React.MouseEvent<Element> | undefined, value: string | number | undefined) => {
-    setRiskSelected(value);
-    setRiskIsOpen(false);
+  const handlePerPageSelect = (_evt: React.MouseEvent | React.KeyboardEvent | MouseEvent, newPerPage: number) => {
+    setPerPage(newPerPage);
   };
 
-  const onPerPageSelect = (_event: any, perPage: number) => {
-    setPerPage(perPage);
-    setPage(1);
+  const renderPagination = (variant: 'top' | 'bottom' | PaginationVariant, isCompact: boolean) => (
+    <Pagination
+      isCompact={isCompact}
+      itemCount={rows.length}
+      page={page}
+      perPage={perPage}
+      onSetPage={handleSetPage}
+      onPerPageSelect={handlePerPageSelect}
+      perPageOptions={[
+        { title: '10', value: 10 },
+        { title: '20', value: 20 },
+        { title: '50', value: 50 },
+        { title: '100', value: 100 },
+      ]}
+      variant={variant}
+      titles={{
+        paginationAriaLabel: `${variant} pagination`,
+      }}
+    />
+  );
+
+  // Table sorting
+
+  const sortRows = (rows: SBOMsDataRow[], sortIndex: number, sortDirection: Direction) => {
+    return [...rows].sort((a, b) => {
+      let returnValue = 0;
+
+      if (typeof Object.values(a)[sortIndex] === 'number') {
+        // numeric sort
+        returnValue = Object.values(a)[sortIndex] - Object.values(b)[sortIndex];
+      } else {
+        // string sort
+        returnValue = Object.values(a)[sortIndex].localeCompare(Object.values(b)[sortIndex]);
+      }
+      if (sortDirection === 'desc') {
+        return returnValue * -1;
+      }
+      return returnValue;
+    });
   };
 
-  const onSetPage = (_event: any, pageNumber: number) => {
-    setPage(pageNumber);
+  const [sortedData, setSortedData] = useState([...sortRows(rows, 0, 'asc')]);
+  const [sortedRows, setSortedRows] = useState([...sortedData]);
+
+  // index of the currently active column
+  const [activeSortIndex, setActiveSortIndex] = useState(0);
+  // sort direction of the currently active column
+  const [activeSortDirection, setActiveSortDirection] = useState<Direction>('asc');
+
+  const onSort = (_event: any, index: number, direction: Direction) => {
+    setActiveSortIndex(index);
+    setActiveSortDirection(direction);
+
+    setSortedData(sortRows(rows, index, direction));
   };
 
-  const onToolbarDropdownToggle = () => {
-    setIsLowerToolbarDropdownOpen(!isLowerToolbarDropdownOpen);
+  useEffect(() => {
+    setSortedRows(sortedData.slice((page - 1) * perPage, page * perPage));
+  }, [sortedData, page, perPage]);
+
+  const getFilteredAndSortedRows = useCallback(() => {
+    let filtered = rows;
+    if (searchValue) {
+      const input = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      filtered = rows.filter((row) => input.test(row.name));
+    }
+
+    return [...filtered].sort((a, b) => {
+      const aVal = Object.values(a)[activeSortIndex];
+      const bVal = Object.values(b)[activeSortIndex];
+      let result = 0;
+
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        result = aVal - bVal;
+      } else if (typeof aVal === 'string' && typeof bVal === 'string') {
+        result = aVal.localeCompare(bVal);
+      }
+
+      return activeSortDirection === 'desc' ? -result : result;
+    });
+  }, [searchValue, activeSortIndex, activeSortDirection]);
+
+  useEffect(() => {
+    const filteredSorted = getFilteredAndSortedRows();
+    setSortedData(filteredSorted);
+    setSortedRows(filteredSorted.slice((page - 1) * perPage, page * perPage));
+  }, [getFilteredAndSortedRows, page, perPage]);
+
+  // Set up attribute selector
+  const [activeAttributeMenu, setActiveAttributeMenu] = useState<'Filter text' | 'Created on'>('Filter text');
+  const [isAttributeMenuOpen, setIsAttributeMenuOpen] = useState(false);
+  const attributeToggleRef = useRef<HTMLButtonElement>(null);
+  const attributeMenuRef = useRef<HTMLDivElement>(null);
+  const attributeContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleAttribueMenuKeys = (event: KeyboardEvent) => {
+    if (!isAttributeMenuOpen) {
+      return;
+    }
+    if (
+      attributeMenuRef.current?.contains(event.target as Node) ||
+      attributeToggleRef.current?.contains(event.target as Node)
+    ) {
+      if (event.key === 'Escape' || event.key === 'Tab') {
+        setIsAttributeMenuOpen(!isAttributeMenuOpen);
+        attributeToggleRef.current?.focus();
+      }
+    }
   };
 
-  const renderPagination = () => {
-    const defaultPerPageOptions = [
-      {
-        title: '1',
-        value: 1,
-      },
-      {
-        title: '5',
-        value: 5,
-      },
-      {
-        title: '10',
-        value: 10,
-      },
-    ];
+  const handleAttributeClickOutside = (event: MouseEvent) => {
+    if (isAttributeMenuOpen && !attributeMenuRef.current?.contains(event.target as Node)) {
+      setIsAttributeMenuOpen(false);
+    }
+  };
 
-    return (
-      <Pagination
-        itemCount={totalItemCount}
-        page={page}
-        perPage={perPage}
-        perPageOptions={defaultPerPageOptions}
-        onSetPage={onSetPage}
-        onPerPageSelect={onPerPageSelect}
-        variant="top"
-        isCompact
+  useEffect(() => {
+    window.addEventListener('keydown', handleAttribueMenuKeys);
+    window.addEventListener('click', handleAttributeClickOutside);
+    return () => {
+      window.removeEventListener('keydown', handleAttribueMenuKeys);
+      window.removeEventListener('click', handleAttributeClickOutside);
+    };
+  }, [isAttributeMenuOpen, attributeMenuRef]);
+
+  const onAttributeToggleClick = (ev: React.MouseEvent) => {
+    ev.stopPropagation(); // Stop handleClickOutside from handling
+    setTimeout(() => {
+      if (attributeMenuRef.current) {
+        const firstElement = attributeMenuRef.current.querySelector('li > button:not(:disabled)');
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        firstElement && (firstElement as HTMLElement).focus();
+      }
+    }, 0);
+    setIsAttributeMenuOpen(!isAttributeMenuOpen);
+  };
+
+  const attributeToggle = (
+    <MenuToggle
+      ref={attributeToggleRef}
+      onClick={onAttributeToggleClick}
+      isExpanded={isAttributeMenuOpen}
+      icon={<FilterIcon />}
+    >
+      {activeAttributeMenu}
+    </MenuToggle>
+  );
+
+  const attributeMenu = (
+    <Menu
+      ref={attributeMenuRef}
+      onSelect={(_ev, itemId) => {
+        setActiveAttributeMenu(itemId?.toString() as 'Filter text' | 'Created on');
+        setIsAttributeMenuOpen(!isAttributeMenuOpen);
+      }}
+    >
+      <MenuContent>
+        <MenuList>
+          <MenuItem itemId="Filter text">Filter text</MenuItem>
+          <MenuItem itemId="Created on">Created on</MenuItem>
+        </MenuList>
+      </MenuContent>
+    </Menu>
+  );
+
+  const attributeDropdown = (
+    <div ref={attributeContainerRef}>
+      <Popper
+        trigger={attributeToggle}
+        triggerRef={attributeToggleRef}
+        popper={attributeMenu}
+        popperRef={attributeMenuRef}
+        appendTo={attributeContainerRef.current || undefined}
+        isVisible={isAttributeMenuOpen}
       />
-    );
-  };
+    </div>
+  );
+
+  // Set up name search input
+  const searchInput = (
+    <SearchInput
+      placeholder="Filter by text"
+      value={searchValue}
+      onChange={(_event, value) => onSearchChange(value)}
+      onClear={() => onSearchChange('')}
+    />
+  );
+
+  // Set up date filter
+  const createdOnInput = <>Date range input here</>;
+
+  const toggleGroupItems = (
+    <ToolbarGroup variant="filter-group">
+      <ToolbarItem>{attributeDropdown}</ToolbarItem>
+      <ToolbarFilter
+        labels={searchValue !== '' ? [searchValue] : ([] as string[])}
+        deleteLabel={() => setSearchValue('')}
+        deleteLabelGroup={() => setSearchValue('')}
+        categoryName="Name"
+        showToolbarItem={activeAttributeMenu === 'Filter text'}
+      >
+        {searchInput}
+      </ToolbarFilter>
+      <ToolbarFilter categoryName={'Created on'} showToolbarItem={activeAttributeMenu === 'Created on'}>
+        {createdOnInput}
+      </ToolbarFilter>
+      <ToolbarItem variant="pagination">{renderPagination('top', true)}</ToolbarItem>
+    </ToolbarGroup>
+  );
 
   const toolbarItems = (
-    <Fragment>
-      <ToolbarItem>{buildFilterDropdown()}</ToolbarItem>
-      <ToolbarItem>
-        <InputGroup>
-          <InputGroupItem isFill>
-            <TextInput
-              name="content-padding-data-toolbar-input1"
-              id="content-padding-data-toolbar-input1"
-              type="search"
-              aria-label="search input example"
-              onChange={(_event: React.FormEvent<HTMLInputElement>, value: string) => setInputValue(value)}
-              value={inputValue}
-            />
-          </InputGroupItem>
-          <InputGroupItem>
-            <Button variant={ButtonVariant.control} aria-label="search button for search input" icon={<SearchIcon />} />
-          </InputGroupItem>
-        </InputGroup>
-      </ToolbarItem>
-      <ToolbarItem variant="pagination" align={{ default: 'alignEnd' }}>
-        {renderPagination()}
-      </ToolbarItem>
-    </Fragment>
+    <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
+      {toggleGroupItems}
+    </ToolbarToggleGroup>
   );
 
   return (
     <>
-      <PageSection isFilled padding={{ default: 'noPadding' }}>
-        <Toolbar id="card-view-data-toolbar-group-types">
+      <PageSection>
+        <Content>
+          <h1>SBOMs</h1>
+        </Content>
+        <Toolbar
+          id="attribute-search-filter-toolbar"
+          clearAllFilters={() => {
+            setSearchValue('');
+          }}
+        >
           <ToolbarContent>{toolbarItems}</ToolbarContent>
         </Toolbar>
-        <Divider component="div" />
       </PageSection>
-      <PageSection hasBodyWrapper={false}>
-        <DataList aria-label="data list">
-          <DataListItem id="content-padding-item1">
-            <DataListItemRow>
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell key="primary-content">
-                    <Flex spaceItems={{ default: 'spaceItemsMd' }} direction={{ default: 'column' }}>
-                      <FlexItem>
-                        <p>amq-streams/kafka-36-rhel9</p>
-                      </FlexItem>
-                      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                        <FlexItem>
-                          <CodeBranchIcon /> 10
-                        </FlexItem>
-                        <FlexItem>
-                          <CodeIcon /> 4
-                        </FlexItem>
-                        <FlexItem>
-                          <CubeIcon /> 5
-                        </FlexItem>
-                        <FlexItem>Updated 2 days ago</FlexItem>
-                      </Flex>
+      <PageSection>
+        <Table aria-label="Sortable Table">
+          <Thead>
+            <Tr>
+              {/* <Th screenReaderText="Row select" />
+              <Th width={20}>{columnNames.name}</Th>
+              <Th width={10}>{columnNames.version}</Th>
+              <Th width={10}>{columnNames.supplier}</Th>
+              <Th width={10}>{columnNames.createdOn}</Th>
+              <Th width={20}>{columnNames.dependencies}</Th>
+              <Th width={20}>{columnNames.vulnerabilities}</Th>
+              <Th width={10}></Th> */}
+              {columns.map((column, columnIndex) => {
+                const sortParams = {
+                  sort: {
+                    sortBy: {
+                      index: activeSortIndex,
+                      direction: activeSortDirection,
+                    },
+                    onSort,
+                    columnIndex,
+                  },
+                };
+                return (
+                  <Th modifier={columnIndex !== 6 ? 'wrap' : undefined} key={columnIndex} {...sortParams}>
+                    {column}
+                  </Th>
+                );
+              })}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {sortedRows.map((row, rowIndex) => (
+              <Tr key={rowIndex}>
+                <>
+                  <Td dataLabel={columns[0]} width={15}>
+                    <div>{row.name}</div>
+                  </Td>
+                  <Td dataLabel={columns[1]} width={10}>
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                      <FlexItem>{row.version}</FlexItem>
                     </Flex>
-                  </DataListCell>,
-                  <DataListAction
-                    key="actions"
-                    aria-labelledby="content-padding-item1 content-padding-action1"
-                    id="content-padding-action1"
-                    aria-label="Actions"
-                  >
-                    <Stack>
-                      <StackItem>
-                        <Button variant={ButtonVariant.secondary}>Secondary</Button>
-                      </StackItem>
-                      <StackItem>
-                        <Button variant={ButtonVariant.link}>Link Button</Button>
-                      </StackItem>
-                    </Stack>
-                  </DataListAction>,
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem id="content-padding-item2">
-            <DataListItemRow>
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell key="primary-content">
-                    <Flex spaceItems={{ default: 'spaceItemsMd' }} direction={{ default: 'column' }}>
-                      <FlexItem>
-                        <p>amq-streams/kafka-37-rhel9</p>
-                      </FlexItem>
-                      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                        <FlexItem>
-                          <CodeBranchIcon /> 10
-                        </FlexItem>
-                        <FlexItem>
-                          <CodeIcon /> 4
-                        </FlexItem>
-                        <FlexItem>
-                          <CubeIcon /> 5
-                        </FlexItem>
-                        <FlexItem>
-                          <CheckCircleIcon /> 7
-                        </FlexItem>
-                        <FlexItem>
-                          <ExclamationTriangleIcon /> 5
-                        </FlexItem>
-                        <FlexItem>
-                          <TimesCircleIcon /> 5
-                        </FlexItem>
-                        <FlexItem>Updated 2 days ago</FlexItem>
-                      </Flex>
+                  </Td>
+                  <Td dataLabel={columns[2]} width={10}>
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                      <FlexItem>{row.supplier}</FlexItem>
                     </Flex>
-                  </DataListCell>,
-                  <DataListAction
-                    key="actions"
-                    aria-labelledby="content-padding-item2 content-padding-action2"
-                    id="content-padding-action2"
-                    aria-label="Actions"
-                  >
-                    <Stack>
-                      <StackItem>
-                        <Button variant={ButtonVariant.secondary}>Secondary</Button>
-                      </StackItem>
-                      <StackItem>
-                        <Button variant={ButtonVariant.link}>Link Button</Button>
-                      </StackItem>
-                    </Stack>
-                  </DataListAction>,
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem id="content-padding-item3">
-            <DataListItemRow>
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell key="primary-content">
-                    <Flex spaceItems={{ default: 'spaceItemsMd' }} direction={{ default: 'column' }}>
-                      <FlexItem>
-                        <p>artemis-project</p>
-                      </FlexItem>
-                      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                        <FlexItem>
-                          <CodeBranchIcon /> 10
-                        </FlexItem>
-                        <FlexItem>
-                          <CodeIcon /> 4
-                        </FlexItem>
-                        <FlexItem>
-                          <CubeIcon /> 5
-                        </FlexItem>
-                        <FlexItem>Updated 2 days ago</FlexItem>
-                      </Flex>
+                  </Td>
+                  <Td dataLabel={columns[3]} width={10}>
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                      <FlexItem>{row.createdOn}</FlexItem>
                     </Flex>
-                  </DataListCell>,
-                  <DataListAction
-                    key="actions"
-                    aria-labelledby="content-padding-item3 content-padding-action3"
-                    id="content-padding-action3"
-                    aria-label="Actions"
-                  >
-                    <Stack>
-                      <StackItem>
-                        <Button variant={ButtonVariant.secondary}>Secondary</Button>
-                      </StackItem>
-                      <StackItem>
-                        <Button variant={ButtonVariant.link}>Link Button</Button>
-                      </StackItem>
-                    </Stack>
-                  </DataListAction>,
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-          <DataListItem id="content-padding-item4">
-            <DataListItemRow>
-              <DataListItemCells
-                dataListCells={[
-                  <DataListCell key="primary-content">
-                    <Flex spaceItems={{ default: 'spaceItemsMd' }} direction={{ default: 'column' }}>
-                      <FlexItem>
-                        <p>azure-sdk-all</p>
-                      </FlexItem>
-                      <Flex spaceItems={{ default: 'spaceItemsMd' }}>
-                        <FlexItem>
-                          <CodeBranchIcon /> 10
-                        </FlexItem>
-                        <FlexItem>
-                          <CodeIcon /> 4
-                        </FlexItem>
-                        <FlexItem>
-                          <CubeIcon /> 5
-                        </FlexItem>
-                        <FlexItem>
-                          <CheckCircleIcon /> 7
-                        </FlexItem>
-                        <FlexItem>
-                          <ExclamationTriangleIcon /> 5
-                        </FlexItem>
-                        <FlexItem>
-                          <TimesCircleIcon /> 5
-                        </FlexItem>
-                        <FlexItem>Updated 2 days ago</FlexItem>
-                      </Flex>
+                  </Td>
+                  <Td dataLabel={columns[4]} width={15}>
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                      <FlexItem>{row.dependencies}</FlexItem>
                     </Flex>
-                  </DataListCell>,
-                  <DataListAction
-                    key="actions"
-                    aria-labelledby="content-padding-item4 content-padding-action4"
-                    id="content-padding-action4"
-                    aria-label="Actions"
-                  >
-                    <Stack>
-                      <StackItem>
-                        <Button variant={ButtonVariant.secondary}>Secondary</Button>
-                      </StackItem>
-                      <StackItem>
-                        <Button variant={ButtonVariant.link}>Link Button</Button>
-                      </StackItem>
-                    </Stack>
-                  </DataListAction>,
-                ]}
-              />
-            </DataListItemRow>
-          </DataListItem>
-        </DataList>
+                  </Td>
+                  <Td dataLabel={columns[5]} width={10}>
+                    <Flex
+                      spaceItems={{ default: 'spaceItemsSm' }}
+                      alignItems={{ default: 'alignItemsCenter' }}
+                      flexWrap={{ default: 'nowrap' }}
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      <FlexItem style={{ minWidth: 15, textAlign: right }}>{severityCount(row)}</FlexItem>
+                      <Divider orientation={{ default: 'vertical' }} />
+                      <FlexItem>
+                        <Flex>
+                          {row.vulnerabilities?.map((vuln) => (
+                            <FlexItem key={vuln?.severity} spacer={{ default: 'spacerXs' }}>
+                              <Flex
+                                spaceItems={{ default: 'spaceItemsXs' }}
+                                alignItems={{ default: 'alignItemsCenter' }}
+                                flexWrap={{ default: 'nowrap' }}
+                                style={{ whiteSpace: 'nowrap' }}
+                              >
+                                <FlexItem>
+                                  {/* Severity Shield and Text */}
+                                  <Flex
+                                    spaceItems={{ default: 'spaceItemsXs' }}
+                                    alignItems={{ default: 'alignItemsCenter' }}
+                                    flexWrap={{ default: 'nowrap' }}
+                                    style={{ whiteSpace: 'nowrap' }}
+                                  >
+                                    <FlexItem>
+                                      <Tooltip content={vuln?.label}>
+                                        <ShieldIcon color={vuln?.color} />
+                                      </Tooltip>
+                                    </FlexItem>
+                                    {vuln?.score !== null && <FlexItem>{Math.round(vuln!.score * 10) / 10}</FlexItem>}
+                                  </Flex>
+                                </FlexItem>
+                              </Flex>
+                            </FlexItem>
+                          ))}
+                        </Flex>
+                      </FlexItem>
+                    </Flex>
+                  </Td>
+                  <Td dataLabel={columns[6]} isActionCell>
+                    <ActionsColumn
+                      items={[
+                        {
+                          title: 'Download SBOM',
+                          onClick: () => {
+                            // downloadSBOM(item.id, `${item.name}.json`);
+                          },
+                        },
+                        {
+                          title: 'Download License Report',
+                          onClick: () => {
+                            // downloadSBOMLicenses(item.id);
+                          },
+                        },
+                      ]}
+                    />
+                  </Td>
+                </>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        {renderPagination('bottom', false)}
       </PageSection>
     </>
   );

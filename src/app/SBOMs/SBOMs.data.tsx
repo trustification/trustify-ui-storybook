@@ -1,67 +1,822 @@
-export const data = [
+// import { ActionsColumn } from '@patternfly/react-table';
+import dayjs from 'dayjs';
+
+const getRandomDate = (start: Date, end: Date): string => {
+  const randomTimestamp = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  return formatDate(randomTimestamp.toISOString())!;
+};
+
+const getRandomInteger = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+export const formatDate = (value?: string | null) => {
+  return value ? dayjs(value).format('MMM DD, YYYY') : null;
+};
+
+export interface SBOMsDataRow {
+  name: string;
+  version: string;
+  supplier: string;
+  dependencies: number;
+  createdOn: string | null;
+  vulnerabilities?: {
+    label?: string;
+    name?: string;
+    color?: string;
+    count: number;
+    score: number | null;
+    severity: 'none' | 'low' | 'medium' | 'high' | 'critical';
+  }[];
+}
+
+export const columns = ['Name', 'Version', 'Supplier', 'Created On', 'Dependencies', 'Vulnerabilities'];
+export const columnNames = {
+  name: 'Name',
+  version: 'Version',
+  supplier: 'Supplier',
+  createdOn: 'Created on',
+  dependencies: 'Dependencies',
+  vulnerabilities: 'Vulnerabilities',
+};
+
+export const rows: SBOMsDataRow[] = [
   {
-    id: 0,
-    name: 'PatternFly',
-    description: 'PatternFly is a community project that promotes design commonality and improves user experience.',
-    icon: 'pfIcon',
+    name: 'quarkus-bom',
+    version: '2.13.8.Final-redhat-00004',
+    supplier: '',
+    createdOn: formatDate('2023-11-22T14:00:00Z'),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 1,
-    name: 'ActiveMQ',
-    description:
-      'The ActiveMQ component allows messages to be sent to a JMS Queue or Topic; or messages to be consumed from a JMS Queue or Topic using Apache ActiveMQ.',
-    icon: 'activeMQIcon',
+    name: 'ubi8-container',
+    version: '8.8-1067',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 2,
-    name: 'Apache Spark',
-    description: 'This documentation page covers the Apache Spark component for the Apache Camel.',
-    icon: 'sparkIcon',
+    name: 'ubi8-micro-container',
+    version: '8.8-7.1696517612',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 3,
-    name: 'Avro',
-    description:
-      'This component provides a dataformat for avro, which allows serialization and deserialization of messages using Apache Avro’s binary dataformat. Moreover, it provides support for Apache Avro’s rpc, by providing producers and consumers endpoint for using avro over netty or http.',
-    icon: 'avroIcon',
+    name: 'ubi9-container',
+    version: '9.3-782',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 4,
-    name: 'Azure Services',
-    description: 'The Camel Components for Windows Azure Services provide connectivity to Azure services from Camel.',
-    icon: 'azureIcon',
+    name: 'ubi9-minimal-container',
+    version: '9.3-1361',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 5,
-    name: 'Crypto',
-    description:
-      'For providing flexible endpoints to sign and verify exchanges using the Signature Service of the Java Cryptographic Extension.',
-    icon: 'saxonIcon',
+    name: 'camel-k-runtime-project',
+    version: '1.15.6.redhat-00048',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 6,
-    name: 'DropBox',
-    description:
-      'The dropbox component allows you to treat Dropbox remote folders as a producer or consumer of messages.',
-    icon: 'dropBoxIcon',
+    name: 'amq-streams/kafka-36-rhel9',
+    version: '',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 7,
-    name: 'JBoss Data Grid',
-    description: 'Read or write to a fully-supported distributed cache and data grid for faster integration services.',
-    icon: 'infinispanIcon',
+    name: 'artemis-project',
+    version: '2.33.0.redhat-00016',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 8,
-    name: 'REST',
-    description:
-      'The rest component allows to define REST endpoints (consumer) using the Rest DSL and plugin to other Camel components as the REST transport. From Camel 2.18 onwards the rest component can also be used as a client (producer) to call REST services.',
-    icon: 'restIcon',
+    name: 'azure-sdk-all',
+    version: '1.0.0',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
   {
-    id: 9,
-    name: 'SWAGGER',
-    description: 'Expose REST services and their APIs using Swagger specification.',
-    icon: 'swaggerIcon',
+    name: 'che-server',
+    version: '7.92.1.redhat-00006',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'devspaces/pluginregistry-rhel8',
+    version: '',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'devspaces/server-rhel8',
+    version: '',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'drools',
+    version: '7.67.2.Final-redhat-00025',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'drools-wb',
+    version: '7.67.2.Final-redhat-00025',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'jbpm',
+    version: '7.67.2.Final-redhat-00001',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'home-banking',
+    version: '1.0-SNAPSHOT',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'kie-wb-common',
+    version: '7.67.2.Final-redhat-00025',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'log4j-bom',
+    version: '2.23.1.redhat-00002',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'model-mesh',
+    version: '0.4.2.managedsvc-redhat-01201',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'narayana-spring-boot-parent',
+    version: '3.2.0.redhat-00002',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'openshift-serverless-1/eventing-kafka-broker-dispatcher-rhel8',
+    version: '',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'org.hl7.fhir.core',
+    version: '4.2.0.redhat-00003',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'patching-tools-parent',
+    version: '8.0.6.redhat-00004',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'sap-quickstarts-parent',
+    version: '4.8.0.redhat-00001',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'spring-boot',
+    version: '4.8.0.redhat-00022',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
+  },
+  {
+    name: 'workitems',
+    version: '7.67.2.Final-redhat-00022',
+    supplier: '',
+    createdOn: getRandomDate(new Date(2020, 0, 1), new Date()),
+    dependencies: getRandomInteger(1, 1000),
+    vulnerabilities: [
+      {
+        color: 'red',
+        count: getRandomInteger(1, 100),
+        label: 'High',
+        score: getRandomInteger(1, 20),
+        severity: 'high',
+      },
+      {
+        color: 'orange',
+        count: getRandomInteger(1, 100),
+        label: 'Medium',
+        score: getRandomInteger(1, 20),
+        severity: 'medium',
+      },
+      {
+        color: 'blue',
+        count: getRandomInteger(1, 100),
+        label: 'Low',
+        score: getRandomInteger(1, 20),
+        severity: 'low',
+      },
+    ],
   },
 ];
