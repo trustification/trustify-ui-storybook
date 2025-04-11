@@ -1,50 +1,75 @@
-import * as React from 'react';
-import { CubesIcon } from '@patternfly/react-icons';
-import {
-  Button,
-  Content,
-  ContentVariants,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateVariant,
-  PageSection,
-} from '@patternfly/react-core';
+import { useState } from 'react';
+import { Content, FileUpload, PageSection, Tab, Tabs, TabTitleText } from '@patternfly/react-core';
 
-export interface IUploadPageProps {
-  sampleProp?: string;
-}
+const UploadPage = () => {
+  const [value, setValue] = useState('');
+  const [filename, setFilename] = useState('');
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  const [isBox, setIsBox] = useState<boolean>(false);
 
-// eslint-disable-next-line prefer-const
-let UploadPage: React.FunctionComponent<IUploadPageProps> = () => (
-  <PageSection hasBodyWrapper={false}>
-    <EmptyState variant={EmptyStateVariant.full} titleText="Empty State (Stub UploadPage Module)" icon={CubesIcon}>
-      <EmptyStateBody>
+  // Toggle currently active tab
+  const handleTabClick = (
+    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    tabIndex: string | number,
+  ) => {
+    setActiveTabKey(tabIndex);
+  };
+
+  const toggleBox = (checked: boolean) => {
+    setIsBox(checked);
+  };
+
+  const handleFileInputChange = (_, file: File) => {
+    setFilename(file.name);
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleClear = (_event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setFilename('');
+    setValue('');
+  };
+
+  return (
+    <>
+      <PageSection>
         <Content>
-          <Content component="p">
-            This represents an the empty state pattern in Patternfly. Hopefully it&apos;s simple enough to use but
-            flexible enough to meet a variety of needs.
-          </Content>
-          <Content component={ContentVariants.small}>
-            This text has overridden a css component variable to demonstrate how to apply customizations using
-            PatternFly&apos;s CSS tokens.
-          </Content>
+          <h1>Upload</h1>
         </Content>
-      </EmptyStateBody>
-      <EmptyStateFooter>
-        <Button variant="primary">Primary Action</Button>
-        <EmptyStateActions>
-          <Button variant="link">Multiple</Button>
-          <Button variant="link">Action Buttons</Button>
-          <Button variant="link">Can</Button>
-          <Button variant="link">Go here</Button>
-          <Button variant="link">In the secondary</Button>
-          <Button variant="link">Action area</Button>
-        </EmptyStateActions>
-      </EmptyStateFooter>
-    </EmptyState>
-  </PageSection>
-);
+      </PageSection>
+      <PageSection>
+        <Tabs
+          activeKey={activeTabKey}
+          onSelect={handleTabClick}
+          isBox={isBox}
+          aria-label="Tabs in the default example"
+          role="region"
+        >
+          <Tab eventKey={0} title={<TabTitleText>SBOM</TabTitleText>} aria-label="SBOM">
+            <FileUpload
+              id="upload-sbom"
+              value={value}
+              filename={filename}
+              filenamePlaceholder="Accepted file types: .json, .bz2, .gz"
+              onFileInputChange={handleFileInputChange}
+              onClearClick={handleClear}
+              browseButtonText="Upload"
+            />
+          </Tab>
+          <Tab eventKey={1} title={<TabTitleText>Advisory</TabTitleText>}>
+            <FileUpload
+              id="upload-advisory"
+              value={value}
+              filename={filename}
+              filenamePlaceholder="Accepted file types: .json, .bz2, .gz"
+              onFileInputChange={handleFileInputChange}
+              onClearClick={handleClear}
+              browseButtonText="Upload"
+            />
+          </Tab>
+        </Tabs>
+      </PageSection>
+    </>
+  );
+};
 
 export { UploadPage };
