@@ -251,18 +251,6 @@ const ImportersPage = ({}: IImportersPageProps) => {
     />
   );
 
-  const searchCvssInput = (
-    <SearchInput
-      placeholder="CVSS"
-      value={searchCvssValue}
-      onChange={(_event, value) => onSearchCvssChange(value)}
-      onClear={() => onSearchCvssChange('')}
-    />
-  );
-
-  // Set up date filter
-  const publishedOnInput = <>Date range input here</>;
-
   const toggleGroupItems = (
     <ToolbarGroup variant="filter-group">
       <ToolbarItem>{attributeDropdown}</ToolbarItem>
@@ -275,17 +263,8 @@ const ImportersPage = ({}: IImportersPageProps) => {
       >
         {searchInput}
       </ToolbarFilter>
-      <ToolbarFilter
-        labels={searchCvssValue !== '' ? [searchCvssValue] : ([] as string[])}
-        deleteLabel={() => setSearchCvssValue('')}
-        deleteLabelGroup={() => setSearchCvssValue('')}
-        categoryName="Identifier"
-        showToolbarItem={activeAttributeMenu === 'CVSS'}
-      >
-        {searchCvssInput}
-      </ToolbarFilter>
       <ToolbarFilter categoryName={'Revision'} showToolbarItem={activeAttributeMenu === 'Revision'}>
-        {publishedOnInput}
+        Some dropdown will go here
       </ToolbarFilter>
       <ToolbarItem variant="pagination">{renderPagination('top', true)}</ToolbarItem>
     </ToolbarGroup>
