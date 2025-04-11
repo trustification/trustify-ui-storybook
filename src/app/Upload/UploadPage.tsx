@@ -31,12 +31,12 @@ const UploadPage = () => {
 
   return (
     <>
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         <Content>
           <h1>Upload</h1>
         </Content>
       </PageSection>
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         <Tabs
           activeKey={activeTabKey}
           onSelect={handleTabClick}
