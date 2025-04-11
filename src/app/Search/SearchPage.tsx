@@ -1,50 +1,84 @@
-import * as React from 'react';
-import { CubesIcon } from '@patternfly/react-icons';
+import { useState } from 'react';
 import {
-  Button,
+  Badge,
+  Card,
+  CardBody,
   Content,
-  ContentVariants,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateVariant,
+  Icon,
   PageSection,
+  Split,
+  SplitItem,
+  Tab,
+  TabAction,
+  Tabs,
+  TabTitleText,
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
 } from '@patternfly/react-core';
 
-export interface ISearchPageProps {
-  sampleProp?: string;
-}
+const SearchPage = () => {
+  const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  const [isBox, setIsBox] = useState<boolean>(false);
 
-// eslint-disable-next-line prefer-const
-let SearchPage: React.FunctionComponent<ISearchPageProps> = () => (
-  <PageSection hasBodyWrapper={false}>
-    <EmptyState variant={EmptyStateVariant.full} titleText="Empty State (Stub SearchPage Module)" icon={CubesIcon}>
-      <EmptyStateBody>
+  // Toggle currently active tab
+  const handleTabClick = (
+    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    tabIndex: string | number,
+  ) => {
+    setActiveTabKey(tabIndex);
+  };
+
+  const onChangeSearchValue = (input) => {
+    console.log(input);
+  };
+
+  const searchTabs = (
+    <Split hasGutter>
+      <SplitItem>
+        <Card isFullHeight>
+          <CardBody style={{ width: 241 }}>Filter panel goes here..</CardBody>
+        </Card>
+      </SplitItem>
+      <SplitItem isFilled>
+        <Tab eventKey={0} title={<TabTitleText>SBOMs</TabTitleText>} aria-label="SBOMs">
+          SBOMs
+        </Tab>
+        <Tab eventKey={1} title={<TabTitleText>Packages</TabTitleText>}>
+          Packages
+        </Tab>
+        <Tab eventKey={2} title={<TabTitleText>Vulnerabilities</TabTitleText>}>
+          Vulnerabilities
+        </Tab>
+        <Tab eventKey={3} title={<TabTitleText>Advisories</TabTitleText>}>
+          Advisories
+        </Tab>
+      </SplitItem>
+    </Split>
+  );
+
+  return (
+    <>
+      <PageSection hasBodyWrapper={false}>
         <Content>
-          <Content component="p">
-            This represents an the empty state pattern in Patternfly. Hopefully it&apos;s simple enough to use but
-            flexible enough to meet a variety of needs.
-          </Content>
-          <Content component={ContentVariants.small}>
-            This text has overridden a css component variable to demonstrate how to apply customizations using
-            PatternFly&apos;s CSS tokens.
-          </Content>
+          <h1>Search Results</h1>
         </Content>
-      </EmptyStateBody>
-      <EmptyStateFooter>
-        <Button variant="primary">Primary Action</Button>
-        <EmptyStateActions>
-          <Button variant="link">Multiple</Button>
-          <Button variant="link">Action Buttons</Button>
-          <Button variant="link">Can</Button>
-          <Button variant="link">Go here</Button>
-          <Button variant="link">In the secondary</Button>
-          <Button variant="link">Action area</Button>
-        </EmptyStateActions>
-      </EmptyStateFooter>
-    </EmptyState>
-  </PageSection>
-);
+      </PageSection>
+      <PageSection hasBodyWrapper={false}>
+        <Toolbar isStatic>
+          <ToolbarContent>
+            <ToolbarGroup align={{ default: 'alignEnd' }}>
+              <ToolbarGroup visibility={{ default: 'hidden', lg: 'visible' }}>
+                <ToolbarItem>Search Menu</ToolbarItem>
+              </ToolbarGroup>
+            </ToolbarGroup>
+          </ToolbarContent>
+        </Toolbar>
+      </PageSection>
+      <PageSection>{searchTabs}</PageSection>{' '}
+    </>
+  );
+};
 
 export { SearchPage };
