@@ -4,8 +4,12 @@
   "description": "",
   "dependencies": {
     "@patternfly/patternfly": "^6.1.0",
+    "@patternfly/react-charts": "^8.2.0",
+    "@patternfly/react-component-groups": "^6.2.0",
     "@patternfly/react-core": "^6.1.0",
-    "@patternfly/react-table": "^6.1.0"
+    "@patternfly/react-table": "^6.1.0",
+    "dayjs": "^1.11.13",
+    "victory": "^37.3.6"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.12",
@@ -22,10 +26,12 @@
     "dotenv-webpack": "^8.1.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "9.1.0",
+    "eslint-import-resolver-typescript": "^4.3.2",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
     "prettier": "^3.4.2",
+    "raw-loader": "^4.0.2",
     "react-axe": "^3.5.4",
     "react-router-dom": "^7.0.2",
     "storybook": "^8.6.12",
@@ -45,10 +51,9 @@
     "ci-checks": "npm run type-check && npm run lint && npm run test:coverage",
     "clean": "rimraf dist",
     "eslint": "eslint --ext .tsx,.js,.ts ./src/",
-    "format": "prettier --check --write ./src/**/*.{tsx,ts}",
+    "format": "prettier --config .prettierrc --check --write ./src/**/*.{tsx,ts}",
     "lint": "npm run eslint",
-    "start": "sirv dist --cors --single --host --port 8080",
-    "start:dev": "webpack serve --color --progress --config webpack.config.ts",
+    "start": "webpack serve --color --progress --config webpack.config.ts",
     "storybook": "storybook dev -p 6006",
     "test": "echo \"Error: no test specified\" && exit 1",
     "type-check": "tsc --noEmit"
