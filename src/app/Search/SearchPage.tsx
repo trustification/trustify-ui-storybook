@@ -1,35 +1,35 @@
-import { useState } from 'react';
 import {
-  Badge,
   Card,
   CardBody,
   Content,
-  Icon,
   PageSection,
   Split,
   SplitItem,
   Tab,
-  TabAction,
-  Tabs,
   TabTitleText,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
+import { useState } from 'react';
 
 const SearchPage = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isBox, setIsBox] = useState<boolean>(false);
 
   // Toggle currently active tab
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleTabClick = (
-    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    _event: React.MouseEvent<unknown> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number,
   ) => {
     setActiveTabKey(tabIndex);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onChangeSearchValue = (input) => {
     console.log(input);
   };

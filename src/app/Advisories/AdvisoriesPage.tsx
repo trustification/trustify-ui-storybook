@@ -106,7 +106,7 @@ const AdvisoriesPage = ({}: IAdvisoriesPageProps) => {
   // sort direction of the currently active column
   const [activeSortDirection, setActiveSortDirection] = useState<Direction>('asc');
 
-  const onSort = (_event: any, index: number, direction: Direction) => {
+  const onSort = (_event: unknown, index: number, direction: Direction) => {
     setActiveSortIndex(index);
     setActiveSortDirection(direction);
 
@@ -121,7 +121,7 @@ const AdvisoriesPage = ({}: IAdvisoriesPageProps) => {
     let filtered = rows;
     if (searchValue) {
       const input = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-      filtered = rows.filter((row) => input.test(row.name));
+      filtered = rows.filter((row) => input.test(row.title));
     }
 
     return [...filtered].sort((a, b) => {

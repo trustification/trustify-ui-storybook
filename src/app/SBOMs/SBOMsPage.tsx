@@ -106,7 +106,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
   // sort direction of the currently active column
   const [activeSortDirection, setActiveSortDirection] = useState<Direction>('asc');
 
-  const onSort = (_event: any, index: number, direction: Direction) => {
+  const onSort = (_event: unknown, index: number, direction: Direction) => {
     setActiveSortIndex(index);
     setActiveSortDirection(direction);
 

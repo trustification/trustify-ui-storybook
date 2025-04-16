@@ -15,6 +15,7 @@ export interface AdvisoriesDataRow {
   identifier: string;
   title: string;
   severity: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type: any;
   modified: string | null;
   vulnerabilities?: {

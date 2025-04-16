@@ -9,12 +9,13 @@ const UploadPage = () => {
 
   // Toggle currently active tab
   const handleTabClick = (
-    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    _event: React.MouseEvent<unknown> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number,
   ) => {
     setActiveTabKey(tabIndex);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const toggleBox = (checked: boolean) => {
     setIsBox(checked);
   };
