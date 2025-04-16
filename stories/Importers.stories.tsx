@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { AppLayout } from "@app/AppLayout/AppLayout";
-import { ImportersPage } from "@app/Importers/ImportersPage";
+import { AppLayout } from '@app/AppLayout/AppLayout';
+import { ImportersPage } from '@app/Importers/ImportersPage';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: "Importers/Importers Page",
+  title: 'Importers/Importers Page',
   component: ImportersPage,
   decorators: [
     (Story) => (
-        <AppLayout>
-          <Story />
-        </AppLayout>
+      <AppLayout>
+        <Story />
+      </AppLayout>
     ),
   ],
 } satisfies Meta<typeof ImportersPage>;
