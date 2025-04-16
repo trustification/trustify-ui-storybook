@@ -203,7 +203,7 @@ const ImporterDataList = () => {
           />
         )}
         isOpen={false}
-        onOpenChange={(isOpen: boolean) => {}}
+        onOpenChange={() => {}}
       >
         <DropdownList>
           <DropdownItem>Action1</DropdownItem>
@@ -215,13 +215,7 @@ const ImporterDataList = () => {
 
   return (
     <Fragment>
-      <Drawer
-        isExpanded={isDrawerExpanded}
-        onExpand={() => {
-          drawerRef.current;
-        }}
-        position="end"
-      >
+      <Drawer isExpanded={isDrawerExpanded} onExpand={() => {}} position="end">
         <DrawerContent
           panelContent={
             <DrawerPanelContent
@@ -232,6 +226,7 @@ const ImporterDataList = () => {
               minSize={'150px'}
             >
               <DrawerHead>
+                {/* eslint-disable @typescript-eslint/no-explicit-any */}
                 <div tabIndex={isDrawerExpanded ? 0 : -1} ref={drawerRef as any}>
                   <Content component="small">Name</Content>
                   <Content component="p">Data Source Name</Content>
