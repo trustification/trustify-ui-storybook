@@ -18,14 +18,12 @@ import {
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
-  Tooltip,
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
-import { Table, Thead, Tr, Th, Tbody, Td, ActionsColumn } from '@patternfly/react-table';
+import { ActionsColumn, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { rows, columns, ImportersDataRow } from './Importers.data';
-import ShieldIcon from '@patternfly/react-icons/dist/esm/icons/shield-alt-icon';
+import { columns, ImportersDataRow, rows } from './Importers.data';
 
 export interface IImportersPageProps {
   sampleProp?: string;
@@ -33,6 +31,7 @@ export interface IImportersPageProps {
 
 type Direction = 'asc' | 'desc' | undefined;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const ImportersPage = ({}: IImportersPageProps) => {
@@ -45,6 +44,7 @@ const ImportersPage = ({}: IImportersPageProps) => {
     setSearchValue(value);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSearchCvssChange = (value: string) => {
     setSearchCvssValue(value);
   };
@@ -106,7 +106,7 @@ const ImportersPage = ({}: IImportersPageProps) => {
   // sort direction of the currently active column
   const [activeSortDirection, setActiveSortDirection] = useState<Direction>('asc');
 
-  const onSort = (_event: any, index: number, direction: Direction) => {
+  const onSort = (_event: unknown, index: number, direction: Direction) => {
     setActiveSortIndex(index);
     setActiveSortDirection(direction);
 
@@ -121,12 +121,12 @@ const ImportersPage = ({}: IImportersPageProps) => {
     let filtered = rows;
     if (searchCvssValue) {
       const input = new RegExp(searchCvssValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-      filtered = rows.filter((row) => input.test(row.identifier));
+      filtered = rows.filter((row) => input.test(row.name));
     }
 
     if (searchValue) {
       const input = new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-      filtered = rows.filter((row) => input.test(row.title));
+      filtered = rows.filter((row) => input.test(row.description));
     }
 
     return [...filtered].sort((a, b) => {
