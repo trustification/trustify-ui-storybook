@@ -1,22 +1,18 @@
-import { useState } from 'react';
 import {
-  Badge,
   Card,
   CardBody,
   Content,
-  Icon,
   PageSection,
   Split,
   SplitItem,
   Tab,
-  TabAction,
-  Tabs,
   TabTitleText,
   Toolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
 } from '@patternfly/react-core';
+import { useState } from 'react';
 
 const SearchPage = () => {
   const [activeTabKey, setActiveTabKey] = useState<string | number>(0);

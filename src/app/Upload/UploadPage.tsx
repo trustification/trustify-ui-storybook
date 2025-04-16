@@ -9,7 +9,7 @@ const UploadPage = () => {
 
   // Toggle currently active tab
   const handleTabClick = (
-    event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
+    _event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
     tabIndex: string | number,
   ) => {
     setActiveTabKey(tabIndex);

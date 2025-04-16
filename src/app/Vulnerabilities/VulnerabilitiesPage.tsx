@@ -106,7 +106,7 @@ const VulnerabilitiesPage = ({}: IVulnerabilitiesPageProps) => {
   // sort direction of the currently active column
   const [activeSortDirection, setActiveSortDirection] = useState<Direction>('asc');
 
-  const onSort = (_event: any, index: number, direction: Direction) => {
+  const onSort = (_event: unknown, index: number, direction: Direction) => {
     setActiveSortIndex(index);
     setActiveSortDirection(direction);
 
@@ -374,11 +374,11 @@ const VulnerabilitiesPage = ({}: IVulnerabilitiesPageProps) => {
                                     style={{ whiteSpace: 'nowrap' }}
                                   >
                                     <FlexItem>
-                                      <Tooltip content={capitalizeFirstLetter(row.severity)}>
+                                      <Tooltip content={capitalizeFirstLetter(row.severity ?? '')}>
                                         <ShieldIcon color={'grey'} />
                                       </Tooltip>
                                     </FlexItem>{' '}
-                                    {capitalizeFirstLetter(row.severity)}
+                                    {capitalizeFirstLetter(row.severity ?? '')}
                                   </Flex>
                                 </FlexItem>
                               </Flex>
