@@ -232,7 +232,7 @@ const ImporterDataList = () => {
               minSize={'150px'}
             >
               <DrawerHead>
-                <div tabIndex={isDrawerExpanded ? 0 : -1} ref={drawerRef}>
+                <div tabIndex={isDrawerExpanded ? 0 : -1} ref={drawerRef as any}>
                   <Content component="small">Name</Content>
                   <Content component="p">Data Source Name</Content>
                 </div>
