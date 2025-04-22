@@ -1,3 +1,6 @@
+import * as React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import {
   Content,
   Divider,
@@ -13,6 +16,9 @@ import {
   PaginationVariant,
   Popper,
   SearchInput,
+  Select,
+  SelectList,
+  SelectOption,
   Toolbar,
   ToolbarContent,
   ToolbarFilter,
@@ -23,11 +29,18 @@ import {
 } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
 import { Table, Thead, Tr, Th, Tbody, Td, ActionsColumn } from '@patternfly/react-table';
-import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { rows, columns, SBOMsDataRow } from './SBOMs.data';
+
 import { right } from '@patternfly/react-core/dist/esm/helpers/Popper/thirdparty/popper-core';
-import ShieldIcon from '@patternfly/react-icons/dist/esm/icons/shield-alt-icon';
+import {
+  SeverityCriticalIcon,
+  SeverityImportantIcon,
+  SeverityModerateIcon,
+  SeverityMinorIcon,
+  SeverityNoneIcon,
+  SeverityUndefinedIcon,
+} from '@patternfly/react-icons';
+
+import { rows, columns, SBOMsDataRow } from './SBOMs.data';
 
 export interface ISBOMsPageProps {
   sampleProp?: string;
@@ -44,6 +57,9 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [searchValue, setSearchValue] = useState('');
+
+  const [isVulnerabilityDropdownOpen, setIsVulnerabilityDropdownOpen] = useState(false);
+  const [selectedVulnerability, setSelectedVulnerability] = useState<string>('');
 
   const onSearchChange = (value: string) => {
     setSearchValue(value);
@@ -263,7 +279,9 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
       <ToolbarFilter categoryName={'Created on'} showToolbarItem={activeAttributeMenu === 'Created on'}>
         {createdOnInput}
       </ToolbarFilter>
-      <ToolbarItem variant="pagination">{renderPagination('top', true)}</ToolbarItem>
+      <ToolbarItem variant="pagination" alignSelf="end">
+        {renderPagination('top', true)}
+      </ToolbarItem>
     </ToolbarGroup>
   );
 
@@ -292,31 +310,55 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
         <Table aria-label="Sortable Table">
           <Thead>
             <Tr>
-              {/* <Th screenReaderText="Row select" />
-              <Th width={20}>{columnNames.name}</Th>
-              <Th width={10}>{columnNames.version}</Th>
-              <Th width={10}>{columnNames.supplier}</Th>
-              <Th width={10}>{columnNames.createdOn}</Th>
-              <Th width={20}>{columnNames.dependencies}</Th>
-              <Th width={20}>{columnNames.vulnerabilities}</Th>
-              <Th width={10}></Th> */}
-              {columns.map((column, columnIndex) => {
-                const sortParams = {
-                  sort: {
-                    sortBy: {
-                      index: activeSortIndex,
-                      direction: activeSortDirection,
-                    },
-                    onSort,
-                    columnIndex,
-                  },
-                };
-                return (
-                  <Th modifier={columnIndex !== 6 ? 'wrap' : undefined} key={columnIndex} {...sortParams}>
-                    {column}
-                  </Th>
-                );
-              })}
+              <Th sort={{ columnIndex: 0, sortBy: {} }}>Name</Th>
+              <Th sort={{ columnIndex: 0, sortBy: {} }}>Version</Th>
+              <Th sort={{ columnIndex: 0, sortBy: {} }}>Created</Th>
+              <Th sort={{ columnIndex: 0, sortBy: {} }}>Packages</Th>
+              <Th sort={{ columnIndex: 0, sortBy: {} }}>Vulnerabilities</Th>
+              <Th sort={{ columnIndex: 0, sortBy: {} }}>Licenses</Th>
+            </Tr>
+            <Tr>
+              <Th></Th>
+              <Th></Th>
+              <Th></Th>
+              <Th></Th>
+              <Th>
+                <Select
+                  id="single-select"
+                  isOpen={isVulnerabilityDropdownOpen}
+                  selected={selectedVulnerability}
+                  onSelect={(_e, value) => {
+                    setSelectedVulnerability(value as string);
+                    setIsVulnerabilityDropdownOpen(false);
+                  }}
+                  onOpenChange={(isOpen) => setIsVulnerabilityDropdownOpen(isOpen)}
+                  toggle={(toggleRef) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      onClick={() => setIsVulnerabilityDropdownOpen(!isVulnerabilityDropdownOpen)}
+                      isExpanded={isVulnerabilityDropdownOpen}
+                      style={
+                        {
+                          width: '200px',
+                        } as React.CSSProperties
+                      }
+                    >
+                      {selectedVulnerability || 'All'}
+                    </MenuToggle>
+                  )}
+                  shouldFocusToggleOnSelect
+                >
+                  <SelectList>
+                    <SelectOption value="Critical">Critical</SelectOption>
+                    <SelectOption value="High">High</SelectOption>
+                    <SelectOption value="Medium">Medium</SelectOption>
+                    <SelectOption value="Low">Low</SelectOption>
+                    <SelectOption value="None">None</SelectOption>
+                    <SelectOption value="Unknown">Unknown</SelectOption>
+                  </SelectList>
+                </Select>
+              </Th>
+              <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -324,29 +366,18 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
               <Tr key={rowIndex}>
                 <>
                   <Td dataLabel={columns[0]} width={15}>
-                    <div>{row.name}</div>
+                    {row.name}
                   </Td>
                   <Td dataLabel={columns[1]} width={10}>
-                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-                      <FlexItem>{row.version}</FlexItem>
-                    </Flex>
+                    {row.version}
                   </Td>
                   <Td dataLabel={columns[2]} width={10}>
-                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-                      <FlexItem>{row.supplier}</FlexItem>
-                    </Flex>
+                    {row.createdOn}
                   </Td>
                   <Td dataLabel={columns[3]} width={10}>
-                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-                      <FlexItem>{row.createdOn}</FlexItem>
-                    </Flex>
+                    <a>{row.dependencies}</a>
                   </Td>
                   <Td dataLabel={columns[4]} width={15}>
-                    <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-                      <FlexItem>{row.dependencies}</FlexItem>
-                    </Flex>
-                  </Td>
-                  <Td dataLabel={columns[5]} width={10}>
                     <Flex
                       spaceItems={{ default: 'spaceItemsSm' }}
                       alignItems={{ default: 'alignItemsCenter' }}
@@ -357,36 +388,111 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                       <Divider orientation={{ default: 'vertical' }} />
                       <FlexItem>
                         <Flex>
-                          {row.vulnerabilities?.map((vuln) => (
-                            <FlexItem key={vuln?.severity} spacer={{ default: 'spacerXs' }}>
-                              <Flex
-                                spaceItems={{ default: 'spaceItemsXs' }}
-                                alignItems={{ default: 'alignItemsCenter' }}
-                                flexWrap={{ default: 'nowrap' }}
-                                style={{ whiteSpace: 'nowrap' }}
-                              >
-                                <FlexItem>
-                                  {/* Severity Shield and Text */}
-                                  <Flex
-                                    spaceItems={{ default: 'spaceItemsXs' }}
-                                    alignItems={{ default: 'alignItemsCenter' }}
-                                    flexWrap={{ default: 'nowrap' }}
-                                    style={{ whiteSpace: 'nowrap' }}
-                                  >
-                                    <FlexItem>
-                                      <Tooltip content={vuln?.label}>
-                                        <ShieldIcon color={vuln?.color} />
-                                      </Tooltip>
-                                    </FlexItem>
-                                    {vuln?.score !== null && <FlexItem>{Math.round(vuln!.score * 10) / 10}</FlexItem>}
-                                  </Flex>
-                                </FlexItem>
-                              </Flex>
-                            </FlexItem>
-                          ))}
+                          <FlexItem spacer={{ default: 'spacerXs' }}>
+                            <Flex
+                              spaceItems={{ default: 'spaceItemsXs' }}
+                              alignItems={{ default: 'alignItemsCenter' }}
+                              flexWrap={{ default: 'nowrap' }}
+                              style={{ whiteSpace: 'nowrap' }}
+                            >
+                              <FlexItem>
+                                <Flex
+                                  spaceItems={{ default: 'spaceItemsXs' }}
+                                  alignItems={{ default: 'alignItemsCenter' }}
+                                  flexWrap={{ default: 'nowrap' }}
+                                  style={{ whiteSpace: 'nowrap' }}
+                                >
+                                  <FlexItem>
+                                    <Tooltip content="Critical">
+                                      <SeverityCriticalIcon color="var(--pf-t--global--icon--color--severity--critical--default)" />
+                                    </Tooltip>
+                                  </FlexItem>
+                                  <FlexItem>20</FlexItem>
+                                </Flex>
+                              </FlexItem>
+                              <FlexItem>
+                                <Flex
+                                  spaceItems={{ default: 'spaceItemsXs' }}
+                                  alignItems={{ default: 'alignItemsCenter' }}
+                                  flexWrap={{ default: 'nowrap' }}
+                                  style={{ whiteSpace: 'nowrap' }}
+                                >
+                                  <FlexItem>
+                                    <Tooltip content="High">
+                                      <SeverityImportantIcon color="var(--pf-t--global--icon--color--severity--important--default)" />
+                                    </Tooltip>
+                                  </FlexItem>
+                                  <FlexItem>20</FlexItem>
+                                </Flex>
+                              </FlexItem>
+                              <FlexItem>
+                                <Flex
+                                  spaceItems={{ default: 'spaceItemsXs' }}
+                                  alignItems={{ default: 'alignItemsCenter' }}
+                                  flexWrap={{ default: 'nowrap' }}
+                                  style={{ whiteSpace: 'nowrap' }}
+                                >
+                                  <FlexItem>
+                                    <Tooltip content="Medium">
+                                      <SeverityModerateIcon color="var(--pf-t--global--icon--color--severity--moderate--default)" />
+                                    </Tooltip>
+                                  </FlexItem>
+                                  <FlexItem>20</FlexItem>
+                                </Flex>
+                              </FlexItem>
+                              <FlexItem>
+                                <Flex
+                                  spaceItems={{ default: 'spaceItemsXs' }}
+                                  alignItems={{ default: 'alignItemsCenter' }}
+                                  flexWrap={{ default: 'nowrap' }}
+                                  style={{ whiteSpace: 'nowrap' }}
+                                >
+                                  <FlexItem>
+                                    <Tooltip content="Low">
+                                      <SeverityMinorIcon color="var(--pf-t--global--icon--color--severity--minor--default)" />
+                                    </Tooltip>
+                                  </FlexItem>
+                                  <FlexItem>20</FlexItem>
+                                </Flex>
+                              </FlexItem>
+                              <FlexItem>
+                                <Flex
+                                  spaceItems={{ default: 'spaceItemsXs' }}
+                                  alignItems={{ default: 'alignItemsCenter' }}
+                                  flexWrap={{ default: 'nowrap' }}
+                                  style={{ whiteSpace: 'nowrap' }}
+                                >
+                                  <FlexItem>
+                                    <Tooltip content="None">
+                                      <SeverityNoneIcon color="var(--pf-t--global--icon--color--severity--none--default)" />
+                                    </Tooltip>
+                                  </FlexItem>
+                                  <FlexItem>20</FlexItem>
+                                </Flex>
+                              </FlexItem>
+                              <FlexItem>
+                                <Flex
+                                  spaceItems={{ default: 'spaceItemsXs' }}
+                                  alignItems={{ default: 'alignItemsCenter' }}
+                                  flexWrap={{ default: 'nowrap' }}
+                                  style={{ whiteSpace: 'nowrap' }}
+                                >
+                                  <FlexItem>
+                                    <Tooltip content="Unknown">
+                                      <SeverityUndefinedIcon color="var(--pf-t--global--icon--color--severity--undefined--default)" />
+                                    </Tooltip>
+                                  </FlexItem>
+                                  <FlexItem>20</FlexItem>
+                                </Flex>
+                              </FlexItem>
+                            </Flex>
+                          </FlexItem>
                         </Flex>
                       </FlexItem>
                     </Flex>
+                  </Td>
+                  <Td dataLabel={columns[5]} width={10}>
+                    <a>123</a>
                   </Td>
                   <Td dataLabel={columns[6]} isActionCell>
                     <ActionsColumn
