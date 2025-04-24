@@ -3,7 +3,7 @@ import { AppLayout } from "@app/AppLayout/AppLayout";
 import { SearchPage } from "@app/Search/SearchPage";
 
 const meta = {
-  title: "Search/Search Page",
+  title: "v2.0/Search/Search Page",
   component: SearchPage,
   decorators: [
     (Story) => (

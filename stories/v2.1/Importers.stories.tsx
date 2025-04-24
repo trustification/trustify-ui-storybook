@@ -3,7 +3,7 @@ import { ImportersPage } from '@app/Importers/ImportersPage';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
-  title: 'Importers/Importers Page',
+  title: 'v2.1/Importers/Importers Page',
   component: ImportersPage,
   decorators: [
     (Story) => (
