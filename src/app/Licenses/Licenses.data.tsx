@@ -1,4 +1,3 @@
-// import { ActionsColumn } from '@patternfly/react-table';
 import dayjs from 'dayjs';
 
 const getRandomDate = (start: Date, end: Date): string => {

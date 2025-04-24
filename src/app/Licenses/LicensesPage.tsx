@@ -1,9 +1,8 @@
-import React, { Fragment, useReducer, useState } from 'react';
+import { Fragment, useReducer, useState } from 'react';
 
 import {
   Content,
   MenuToggle,
-  MenuToggleElement,
   PageSection,
   SearchInput,
   Select,
@@ -21,14 +20,12 @@ import { LicensesDataList } from './components/LicensesDataList';
 
 const initialState = {
   type: { isExpanded: false, selected: '' },
-  status: { isExpanded: false },
   cvss: { isExpanded: false },
   products: { isExpanded: false },
   packages: { isExpanded: false },
   suppliers: { isExpanded: false },
   licenses: { isExpanded: false },
   filters: {
-    status: [],
     cvss: [],
     products: [],
     packages: [],
@@ -94,6 +91,7 @@ function reducer(state, action) {
 
 const LicensesPage = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [searchTerm, setSearchTerm] = useState('');
 
   return (
     <Fragment>
@@ -107,124 +105,14 @@ const LicensesPage = () => {
           <ToolbarContent>
             <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
               <ToolbarItem>
-                <SearchInput placeholder="Search by license name" />
+                <SearchInput
+                  placeholder="Search by license name"
+                  value={searchTerm}
+                  onChange={(_, value) => setSearchTerm(value)}
+                  onClear={() => setSearchTerm('')}
+                />
               </ToolbarItem>
               <ToolbarGroup variant="filter-group">
-                {/* <ToolbarItem>
-                  <Select
-                    toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                      <MenuToggle
-                        ref={toggleRef}
-                        onClick={() => setTypeIsExpanded(!typeIsExpanded)}
-                        isExpanded={typeIsExpanded}
-                      >
-                        {typeSelected || 'License names containing'}
-                      </MenuToggle>
-                    )}
-                    onSelect={(_e, selection) => {
-                      setTypeSelected(selection as string);
-                      setTypeIsExpanded(false);
-                    }}
-                    onOpenChange={(isOpen) => setTypeIsExpanded(isOpen)}
-                    selected={typeSelected}
-                    isOpen={typeIsExpanded}
-                  >
-                    <SelectList>
-                      <SelectOption value="License">License names containing</SelectOption>
-                    </SelectList>
-                  </Select>
-                </ToolbarItem> */}
-                <ToolbarFilter
-                  categoryName="Status"
-                  labels={state.filters.status}
-                  deleteLabel={(category, chip) =>
-                    dispatch({ type: 'DELETE_FILTER', key: 'status', value: chip as string })
-                  }
-                  deleteLabelGroup={() => dispatch({ type: 'CLEAR_FILTER_GROUP', key: 'status' })}
-                >
-                  <Select
-                    toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-                      <MenuToggle
-                        ref={toggleRef}
-                        onClick={() => dispatch({ type: 'TOGGLE_EXPANDED', key: 'status' })}
-                        isExpanded={state.status.isExpanded}
-                      >
-                        Status{' '}
-                        {state.filters.status.length > 0 && (
-                          <span style={{ marginLeft: 4 }}>(+{state.filters.status.length})</span>
-                        )}
-                      </MenuToggle>
-                    )}
-                    onSelect={(_e, selection) =>
-                      dispatch({ type: 'TOGGLE_FILTER', key: 'status', value: selection as string })
-                    }
-                    isOpen={state.status.isExpanded}
-                    onOpenChange={(isOpen) => dispatch({ type: 'SET_EXPANDED', key: 'status', value: isOpen })}
-                    selected={state.filters.status}
-                    role="menu"
-                  >
-                    <SelectList>
-                      <SelectOption
-                        hasCheckbox
-                        value="Scheduled"
-                        isSelected={state.filters.status.includes('Scheduled')}
-                      >
-                        Scheduled
-                      </SelectOption>
-                      <SelectOption hasCheckbox value="Running" isSelected={state.filters.status.includes('Running')}>
-                        Running
-                      </SelectOption>
-                      <SelectOption hasCheckbox value="Disabled" isSelected={state.filters.status.includes('Disabled')}>
-                        Disabled
-                      </SelectOption>
-                    </SelectList>
-                  </Select>
-                </ToolbarFilter>
-
-                <ToolbarFilter
-                  categoryName="Status"
-                  labels={state.filters.status}
-                  deleteLabel={(category, chip) =>
-                    dispatch({ type: 'DELETE_FILTER', key: 'status', value: chip as string })
-                  }
-                  deleteLabelGroup={() => dispatch({ type: 'CLEAR_FILTER_GROUP', key: 'status' })}
-                >
-                  <Select
-                    toggle={(toggleRef) => (
-                      <MenuToggle
-                        ref={toggleRef}
-                        onClick={() => dispatch({ type: 'TOGGLE_EXPANDED', key: 'status' })}
-                        isExpanded={state.status.isExpanded}
-                      >
-                        Status {state.filters.status.length > 0 && <span>(+{state.filters.status.length})</span>}
-                      </MenuToggle>
-                    )}
-                    onSelect={(_e, selection) =>
-                      dispatch({ type: 'TOGGLE_FILTER', key: 'status', value: selection as string })
-                    }
-                    isOpen={state.status.isExpanded}
-                    onOpenChange={(isOpen) => dispatch({ type: 'SET_EXPANDED', key: 'status', value: isOpen })}
-                    selected={state.filters.status}
-                    role="menu"
-                  >
-                    <SelectList>
-                      <SelectOption
-                        hasCheckbox
-                        value="Scheduled"
-                        isSelected={state.filters.status.includes('Scheduled')}
-                      >
-                        Scheduled
-                      </SelectOption>
-                      <SelectOption hasCheckbox value="Running" isSelected={state.filters.status.includes('Running')}>
-                        Running
-                      </SelectOption>
-                      <SelectOption hasCheckbox value="Disabled" isSelected={state.filters.status.includes('Disabled')}>
-                        Disabled
-                      </SelectOption>
-                    </SelectList>
-                  </Select>
-                </ToolbarFilter>
-
                 <ToolbarFilter
                   categoryName="CVSS"
                   labels={state.filters.cvss}
@@ -465,7 +353,7 @@ const LicensesPage = () => {
             </ToolbarToggleGroup>
           </ToolbarContent>
         </Toolbar>
-        <LicensesDataList />
+        <LicensesDataList search={searchTerm} filters={state.filters} />
       </PageSection>
     </Fragment>
   );
