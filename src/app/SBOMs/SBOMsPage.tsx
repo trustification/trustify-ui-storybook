@@ -212,7 +212,9 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                   <Select
                     isOpen={isSeverityOpen}
                     selected={selectedSeverity}
-                    onSelect={(_e, _value) => {}}
+                    onSelect={(_e, value) => {
+                      console.log(value);
+                    }}
                     onOpenChange={(isOpen) => {
                       if (!isOpen) {
                         setIsSeverityOpen(false);
@@ -275,7 +277,9 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                   <Select
                     isOpen={isVendorOpen}
                     selected={selectedVendor}
-                    onSelect={(_e, _value) => {}}
+                    onSelect={(_e, value) => {
+                      console.log(value);
+                    }}
                     onOpenChange={(isOpen) => {
                       if (!isOpen) {
                         setIsVendorOpen(false);
