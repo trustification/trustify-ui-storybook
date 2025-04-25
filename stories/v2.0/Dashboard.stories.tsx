@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { AppLayout } from "@app/AppLayout/AppLayout";
-import { VulnerabilitiesPage } from "@app/Vulnerabilities/VulnerabilitiesPage";
+import { Dashboard } from "@app/Dashboard/Dashboard";
 
 const meta = {
-  title: "Vulnerabilities/Vulnerabilities Page",
-  component: VulnerabilitiesPage,
+  title: "v2.0/Dashboard/Dashboard",
+  component: Dashboard,
   decorators: [
     (Story) => (
         <AppLayout>
@@ -12,7 +12,7 @@ const meta = {
         </AppLayout>
     ),
   ],
-} satisfies Meta<typeof VulnerabilitiesPage>;
+} satisfies Meta<typeof Dashboard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -29,7 +29,7 @@ type ProductExplorerPropsAndCustomArgs = React.ComponentProps<
 > & { userStory?: string };
 
 const meta: Meta<ProductExplorerPropsAndCustomArgs> = {
-  title: "Products/Product Explorer",
+  title: "v2.1/Products/Product Explorer",
   component: ProductExplorer,
   parameters: {
     docs: {

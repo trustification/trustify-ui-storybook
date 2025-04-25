@@ -140,3 +140,4 @@ dist
 storybook-static/
 
 .idea/
+.vscode/

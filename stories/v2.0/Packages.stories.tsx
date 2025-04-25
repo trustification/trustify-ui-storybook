@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { AppLayout } from "@app/AppLayout/AppLayout";
-import { UploadPage } from "@app/Upload/UploadPage";
+import { PackagesPage } from "@app/Packages/PackagesPage";
 
 const meta = {
-  title: "Upload/Upload Page",
-  component: UploadPage,
+  title: "v2.0/Packages/Packages Page",
+  component: PackagesPage,
   decorators: [
     (Story) => (
         <AppLayout>
@@ -12,7 +12,7 @@ const meta = {
         </AppLayout>
     ),
   ],
-} satisfies Meta<typeof UploadPage>;
+} satisfies Meta<typeof PackagesPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
