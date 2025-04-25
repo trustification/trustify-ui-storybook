@@ -21,7 +21,7 @@ import {
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
-import { FilterIcon, TimesIcon } from '@patternfly/react-icons';
+import { FilterIcon, TimesIcon, SortAmountUpIcon } from '@patternfly/react-icons';
 
 import { SBOMDataList } from './components/SBOMDataList';
 
@@ -46,6 +46,9 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
   const [selectedVendor, setSelectedVendor] = React.useState([]);
   const [vendorInputValue, setVendorInputValue] = React.useState<string>('');
 
+  const [sortByIsExpanded, setSortByIsExpanded] = React.useState(false);
+  const [sortBySelected, setSortBySelected] = React.useState('');
+
   return (
     <>
       <PageSection>
@@ -65,7 +68,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                 <SearchInput />
               </ToolbarItem>
               <ToolbarGroup variant="filter-group">
-                <ToolbarItem>
+                <ToolbarItem style={{ width: 140 }}>
                   <Select
                     isOpen={isLicenseOpen}
                     selected={selectedLicense}
@@ -105,7 +108,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                               onChange={(_e, value) => {
                                 setLicenseInputValue(value);
                               }}
-                              placeholder="Select a License"
+                              placeholder="License"
                               isExpanded={isLicenseOpen}
                             />
                             <TextInputGroupUtilities {...(!licenseInputValue ? { style: { display: 'none' } } : {})}>
@@ -134,7 +137,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                     </SelectList>
                   </Select>
                 </ToolbarItem>
-                <ToolbarItem>
+                <ToolbarItem style={{ width: 140 }}>
                   <Select
                     isOpen={isPackageOpen}
                     selected={selectedPackage}
@@ -174,7 +177,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                               onChange={(_e, value) => {
                                 setPackageInputValue(value);
                               }}
-                              placeholder="Select a Package"
+                              placeholder="Package"
                               isExpanded={isPackageOpen}
                             />
                             <TextInputGroupUtilities {...(!packageInputValue ? { style: { display: 'none' } } : {})}>
@@ -205,7 +208,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                 </ToolbarItem>
               </ToolbarGroup>
               <ToolbarGroup variant="filter-group">
-                <ToolbarItem>
+                <ToolbarItem style={{ width: 140 }}>
                   <Select
                     isOpen={isSeverityOpen}
                     selected={selectedSeverity}
@@ -239,7 +242,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                               onChange={(_e, value) => {
                                 setSeverityInputValue(value);
                               }}
-                              placeholder="Select a Severity"
+                              placeholder="Severity"
                               isExpanded={isSeverityOpen}
                             />
                             <TextInputGroupUtilities {...(!severityInputValue ? { style: { display: 'none' } } : {})}>
@@ -268,7 +271,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                     </SelectList>
                   </Select>
                 </ToolbarItem>
-                <ToolbarItem>
+                <ToolbarItem style={{ width: 140 }}>
                   <Select
                     isOpen={isVendorOpen}
                     selected={selectedVendor}
@@ -302,7 +305,7 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                               onChange={(_e, value) => {
                                 setVendorInputValue(value);
                               }}
-                              placeholder="Select a Vendor"
+                              placeholder="Vendor"
                               isExpanded={isVendorOpen}
                             />
                             <TextInputGroupUtilities {...(!vendorInputValue ? { style: { display: 'none' } } : {})}>
@@ -331,6 +334,36 @@ const SBOMsPage = ({}: ISBOMsPageProps) => {
                     </SelectList>
                   </Select>
                 </ToolbarItem>
+              </ToolbarGroup>
+              <ToolbarGroup variant="action-group">
+                <SortAmountUpIcon />
+                <Select
+                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      onClick={() => setSortByIsExpanded(!sortByIsExpanded)}
+                      isExpanded={sortByIsExpanded}
+                    >
+                      {sortBySelected || 'SortBy'}
+                    </MenuToggle>
+                  )}
+                  onSelect={(_e, selection) => {
+                    setSortBySelected(selection as string);
+                    setSortByIsExpanded(false);
+                  }}
+                  onOpenChange={(isOpen) => setSortByIsExpanded(isOpen)}
+                  selected={sortBySelected}
+                  isOpen={sortByIsExpanded}
+                >
+                  <SelectList>
+                    <SelectOption value="Name">Name</SelectOption>
+                    <SelectOption value="Creation date">Creation date</SelectOption>
+                    <SelectOption value="License count">License count</SelectOption>
+                    <SelectOption value="Package count">Package count</SelectOption>
+                    <SelectOption value="Vulnerability count - Vendor1">Vulnerability count - Vendor1</SelectOption>
+                    <SelectOption value="Vulnerability count - Vendor2">Vulnerability count - Vendor2</SelectOption>
+                  </SelectList>
+                </Select>
               </ToolbarGroup>
             </ToolbarToggleGroup>
             <ToolbarGroup align={{ default: 'alignEnd' }}>

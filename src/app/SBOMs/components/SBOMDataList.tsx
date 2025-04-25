@@ -187,9 +187,6 @@ export const SBOMDataList = () => {
               <DataListCell key="vendor2-vulnerabilities" isFilled={false} alignRight>
                 {getVulnerabilityCell('Vendor2')}
               </DataListCell>,
-              <DataListCell key="all-vulnerabilities" isFilled={false} alignRight>
-                {getVulnerabilityCell('All')}
-              </DataListCell>,
             ]}
           />
           {action}
