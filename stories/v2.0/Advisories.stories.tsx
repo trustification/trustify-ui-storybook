@@ -3,7 +3,7 @@ import { AppLayout } from "@app/AppLayout/AppLayout";
 import { AdvisoriesPage } from "@app/Advisories/AdvisoriesPage";
 
 const meta = {
-  title: "Advisories/Advisories Page",
+  title: "v2.0/Advisories/Advisories Page",
   component: AdvisoriesPage,
   decorators: [
     (Story) => (
